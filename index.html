@@ -52,11 +52,124 @@
       </section>
 
       <aside class="compare">
-        <h2>并排对比</h2>
-        <div id="comparePane" class="compare-pane"></div>
+        <div class="side-tabs" role="tablist">
+          <button type="button" class="side-tab is-active" data-tab="queue">复看队列 <span id="queueCount" class="tab-badge">0</span></button>
+          <button type="button" class="side-tab" data-tab="compare">并排对比</button>
+        </div>
+        <section id="queuePane" class="side-pane">
+          <p class="side-hint">新增或改动的标注先留在待审建议，老师认可后才并入样本结论。</p>
+          <div id="queueList" class="queue-list"></div>
+        </section>
+        <section id="comparePane" class="side-pane" hidden>
+          <div class="compare-pane"></div>
+        </section>
       </aside>
     </section>
   </main>
+
+  <!-- 区域标注台 -->
+  <div id="annotateModal" class="modal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-label="区域标注台">
+      <header class="modal-head">
+        <div>
+          <p class="modal-eyebrow">区域标注台</p>
+          <h2 id="modalSampleTitle">样本</h2>
+        </div>
+        <button type="button" id="modalClose" class="ghost-btn">关闭</button>
+      </header>
+
+      <div class="modal-toolbar">
+        <label class="toolbar-field">更换照片
+          <input id="viewPhotoInput" type="file" accept="image/*">
+        </label>
+        <label class="toolbar-field">放大倍数
+          <input id="viewMagnification" placeholder="40x">
+        </label>
+        <label class="toolbar-field">偏光类型
+          <select id="viewPolarization">
+            <option>单偏光</option>
+            <option>正交偏光</option>
+            <option>反射光</option>
+          </select>
+        </label>
+        <button type="button" id="applyViewBtn">应用视域变更</button>
+        <p id="viewHint" class="view-hint"></p>
+      </div>
+
+      <div class="modal-body">
+        <div class="stage-col">
+          <div id="stage" class="stage">
+            <img id="stageImage" alt="样本显微照片">
+            <div id="rectLayer" class="rect-layer"></div>
+            <div id="drawGhost" class="draw-ghost" hidden></div>
+            <div id="stagePlaceholder" class="stage-placeholder" hidden>该视域没有照片，无法拖框</div>
+          </div>
+          <p class="stage-tip">在照片上按住鼠标拖出矩形；点击已有方框可查看或编辑该标注。绿框＝已认可，黄框＝待审，灰框＝历史视域。</p>
+        </div>
+
+        <div class="annot-col">
+          <form id="annotationForm" class="annotation-form" hidden>
+            <h3 id="annotationFormTitle">新建标注</h3>
+            <label>现象 <input name="phenomenon" list="phenomenonList" required placeholder="如：裂隙、碎屑颗粒">
+              <datalist id="phenomenonList"></datalist>
+            </label>
+            <div class="pair">
+              <label>置信度
+                <select name="confidence" required>
+                  <option value="">请选择</option>
+                  <option>高</option>
+                  <option>中</option>
+                  <option>低</option>
+                </select>
+              </label>
+              <label>认可状态
+                <input name="statusPreview" value="待审建议" disabled>
+              </label>
+            </div>
+            <div class="pair">
+              <label>镜下坐标 X / mm<input name="coordX" inputmode="decimal" placeholder="12.40"></label>
+              <label>镜下坐标 Y / mm<input name="coordY" inputmode="decimal" placeholder="-3.15"></label>
+            </div>
+            <label>备注<textarea name="note" rows="2" placeholder="切穿两颗石英、未见充填"></textarea></label>
+
+            <div id="conflictBox" class="conflict-box" hidden></div>
+
+            <div class="form-actions">
+              <button type="submit" id="annotationSaveBtn">保存为待审建议</button>
+              <button type="button" id="annotationCancelBtn" class="ghost-btn">取消</button>
+            </div>
+          </form>
+
+          <div class="annotation-detail" id="annotationDetail" hidden></div>
+
+          <div class="list-filters">
+            <input id="annPhenomenonFilter" placeholder="按现象筛选，如：裂隙">
+            <select id="annStatusFilter">
+              <option value="">全部状态</option>
+              <option value="pending">待审建议</option>
+              <option value="approved">已认可</option>
+            </select>
+          </div>
+
+          <div class="annotation-list-head">
+            <h3>标注列表</h3>
+            <div class="legend">
+              <span><i class="dot dot-approved"></i>已认可</span>
+              <span><i class="dot dot-pending"></i>待审</span>
+              <span><i class="dot dot-history"></i>历史</span>
+            </div>
+          </div>
+          <ul id="annotationList" class="annotation-list"></ul>
+
+          <h3 class="history-title">历史视域（原标注仍可查，不计入当前结论）</h3>
+          <div id="historyViews" class="history-views"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./annotations.js"></script>
+  <script src="./store.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
