@@ -35,7 +35,10 @@
         <label>主要矿物<input name="minerals" placeholder="石英、斜长石、黑云母"></label>
         <label>颗粒结构<input name="texture" placeholder="半自形粒状、碎裂结构"></label>
         <label>老师批注<textarea name="comment" rows="4" placeholder="记录鉴定依据或疑点"></textarea></label>
-        <button type="submit">保存样本</button>
+        <div class="form-actions">
+          <button id="submitSampleBtn" type="submit">保存样本</button>
+          <button id="cancelEditBtn" type="button" class="ghost-btn" hidden>取消编辑</button>
+        </div>
       </form>
 
       <section class="board">
@@ -54,9 +57,68 @@
       <aside class="compare">
         <h2>并排对比</h2>
         <div id="comparePane" class="compare-pane"></div>
+        <h2 class="review-title">复看队列</h2>
+        <div class="review-filters">
+          <select id="phenomenonFilter">
+            <option value="">全部现象</option>
+          </select>
+          <select id="statusFilter">
+            <option value="">全部状态</option>
+            <option value="pending">待审建议</option>
+            <option value="approved">已认可</option>
+            <option value="stale">历史（条件已变）</option>
+          </select>
+        </div>
+        <ul id="reviewList" class="review-list"></ul>
       </aside>
     </section>
   </main>
+
+  <dialog id="annotateDialog" class="annotate-dialog">
+    <div class="annotate-head">
+      <h2 id="annotateTitle">区域标注</h2>
+      <button id="closeDialogBtn" type="button" class="ghost-btn">关闭</button>
+    </div>
+    <div class="annotate-body">
+      <div id="annotateStage" class="annotate-stage">
+        <img id="annotateImg" alt="标注底图">
+        <div id="rectLayer" class="rect-layer"></div>
+      </div>
+      <div class="annotate-side">
+        <form id="annotationForm" class="annotation-form">
+          <p id="draftHint" class="draft-hint">在照片上按住拖拽，框出要标注的区域。</p>
+          <label>现象
+            <input name="phenomenon" list="phenomenonOptions" required placeholder="石英颗粒 / 微裂隙 / 蚀变带">
+          </label>
+          <datalist id="phenomenonOptions"></datalist>
+          <div class="pair">
+            <label>置信度
+              <select name="confidence">
+                <option>高</option>
+                <option selected>中</option>
+                <option>低</option>
+              </select>
+            </label>
+            <label>镜下坐标
+              <input name="coords" placeholder="X=12.4, Y=8.1">
+            </label>
+          </div>
+          <div id="overlapNotice" class="overlap-notice" hidden></div>
+          <div class="form-actions">
+            <button type="submit">保存标注</button>
+            <button id="clearDraftBtn" type="button" class="ghost-btn">重新框选</button>
+          </div>
+        </form>
+        <section class="annotate-existing">
+          <h3>本图已有标注</h3>
+          <ul id="annotationList" class="annotation-list"></ul>
+        </section>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="./annotations.js"></script>
+  <script src="./store.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
